@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Business Plan Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        label, textarea, button {
+            margin-bottom: 10px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Enter your business idea below, and we'll build you a business plan free of charge!</h1>
+        <form id="businessIdeaForm">
+            <label for="idea">Your Business Idea</label>
+            <textarea id="idea" name="idea" rows="4" required></textarea>
+            <button type="submit">Submit</button>
+        </form>
+
+        <div id="result" style="margin-top: 20px; display: none;">
+            <h2>My AI Business Plan</h2>
+            <div id="businessPlan"></div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('businessIdeaForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            const userIdea = document.getElementById('idea').value;
+            const prompt = `Build me a business plan - my business idea is: ${userIdea}`;
+            
+            const apiKey = 'your_openai_api_key';  // Make sure you replace this with your API key
+            const url = 'https://api.openai.com/v1/chat/completions';
+
+            // Showing a loading message or spinner could be helpful here.
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${apiKey}`
+                    },
+                    body: JSON.stringify({
+                        model: "gpt-4",
+                        messages: [{role: "user", content: prompt}],
+                        max_tokens: 500,
+                        temperature: 0.7
+                    })
+                });
+
+                const data = await response.json();
+                const businessPlan = data.choices[0].message.content;
+
+                // Show the result section and insert the generated plan
+                document.getElementById('result').style.display = 'block';
+                document.getElementById('businessPlan').innerText = businessPlan;
+            } catch (error) {
+                console.error('Error fetching the business plan:', error);
+            }
+        });
+    </script>
+</body>
+</html>
